@@ -1,0 +1,12 @@
+In lifting.c:
+    loops:
+        First one builds cos/sin/reciprocal? cache 
+        Second one does this:
+            v[0:1]=lift(pair1)
+            v[2:3]=sumdiff(pair2)
+            p1[2*j-2:2*j-1] = sumdiff(v)[0:1]
+            p2[2*j-2:2*j-1] = sumdiff(v)[2:3]
+    pout is used to hold returns from lift()
+    temp1 is used to hold returns from sumdiff()
+
+astyle options: --indent=spaces=4 --brackets=linux --indent-classes --indent-switches --indent-cases --pad=paren --unpad=paren --convert-tabs
