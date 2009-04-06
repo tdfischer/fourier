@@ -8,5 +8,12 @@ In lifting.c:
             p2[2*j-2:2*j-1] = sumdiff(v)[2:3]
     pout is used to hold returns from lift()
     temp1 is used to hold returns from sumdiff()
+    v[0:3] - Holds the rotations
+    What lift(x[size], s, R) does:
+        ** Takes only x[0] and x[1] instead of all elements **
+        x is a list of two points
+        R is magic, apparently.
+        s is a sin() of some number
+        returns the values into global pout variables
 
 astyle options: --indent=spaces=4 --brackets=linux --indent-classes --indent-switches --indent-cases --pad=paren --unpad=paren --convert-tabs
