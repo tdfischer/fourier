@@ -78,7 +78,7 @@ sumdiff ( double xy[size], int r )
         temp1[l] = x1[k] - x2[k];
 }
 
-lift ( double x[SIZE], double s, double R )
+lift ( double x[2], double s, double R )
 {
     double L1;
     L1 = x[0] - R * x[1];
