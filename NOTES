@@ -1,6 +1,6 @@
 In lifting.c:
     loops:
-        First one builds cos/sin/reciprocal? cache 
+        First one builds cos/sin/magic R cache. It is never used again.
         Second one does this:
             v[0:1]=lift(pair1)
             v[2:3]=sumdiff(pair2)
@@ -9,6 +9,8 @@ In lifting.c:
     pout is used to hold returns from lift()
     temp1 is used to hold returns from sumdiff()
     v[0:3] - Holds the rotations
+    The mysterious "R" variable
+        A ratio used in lift()
     What lift(x[size], s, R) does:
         ** Takes only x[0] and x[1] instead of all elements **
         x is a list of two points
