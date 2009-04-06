@@ -1,0 +1,35 @@
+Howdy, and welcome to the parallel fourier transform sources.
+
+Notes about the old implementations/algorithms are kept in NOTES
+
+If you want to know how to get access to the repository, go to
+http://github.com/ and create an account. Once that's done, send an email to
+Trever Fischer <tdf11@uakron.edu> with your github account name. He'll add it
+to the list of contributors and you can start pushing commits.
+
+To start with git, run:
+
+    git clone <username>@github.com:workman161/fourier.git
+
+This'll make a clone of the git repository. At this point, your repository is
+totally independent of the github one. Any changes you make must later be
+pushed to the 'origin' repository. After you make some changes, run:
+
+    git add <files>
+
+This stages your changes for adding to the next commit. This lets you do some
+fancy things, but thats outside the scope of this tutorial. After all your
+changes are staged, you now commit it:
+
+    git commit -m "<commit message>"
+
+Without the -m option and message, git starts up $EDITOR and lets you write
+a much more detailed message. You can make as many commits as you want. They
+all stay in your local repository. Once you get reconnected to the network,
+you can push those commits to the main repository with this:
+
+    git push
+
+Its really easy once you get the hang of it. For more tips or how to use the
+gui in windows, ask Trever Fischer <tdf11@uakron.edu> and he'll be happy to
+explain more than you need to know.
