@@ -69,12 +69,10 @@ void sumdiff ( double in[], double out[], int size )
     }
 }
 
-lift ( double x[2], double s, double R )
+lift ( double x[2], double out[2] double sinValue, double RFactor )
 {
-    double L1;
-    L1 = x[0] - R * x[1];
-    pout[1] = s * L1 - x[1];
-    pout[0] = L1 + R * pout[1];
+    out[1] = sinValue * (x[0] - RFactor * x[1]) - x[1];
+    out[0] = (x[0] - RFactor * x[1]) + RFactor * out[1];
 }
 
 lift90sr ( double pin[size], double Sm[size], double Rm[size], int m )
