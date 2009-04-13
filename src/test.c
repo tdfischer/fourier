@@ -58,27 +58,15 @@ int main(int argc, char *argv[])
     }
 }
 
-sumdiff ( double in[SIZE], int r )
+void sumdiff ( double in[], double out[], int size )
 {
-    int halfR, i, j, h, k, l;
-    double x1[SIZE], x2[SIZE];
-    halfR = ( r / 2 );
-    
-    //Copy first half of in[] to x1[]
-    for ( i = 0; i < halfR; i++ )
-        x1[i] = in[i];
-    
-    //Copy second half of in[] to x2[]
-    for ( h = 0, j = halfR; j < r; j++, h++ )
-        x2[h] = in[j];
-    
-    //Put nth of first half plus nth of second half into first half of return
-    for ( k = 0; k < halfR; k++ )
-        temp1[k] = x1[k] + x2[k];
-    
-    //Put nth of first half minus nth of second half into second half of return
-    for ( l = f1, k = 0; l < r; l++, k++ )
-        temp1[l] = x1[k] - x2[k];
+    for (int i = 0; i < size / 2; i++ ) {
+        //Split in[] into halves
+        //Put first half plus second half into first half of return
+        //And then the second half
+        out[i] = in[i] + in[i*2];
+        out[i*2] = in[i] - in[i*2];
+    }
 }
 
 lift ( double x[2], double s, double R )
