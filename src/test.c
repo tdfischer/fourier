@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
     
     if (processorID == 0) {
         //Changed this from while(n<size) loop for readability
+        //Builds an initial list of data points
         int n;
         for(n = 1;n<=SIZE;n++) {
             x[n] = n;
@@ -28,16 +29,19 @@ int main(int argc, char *argv[])
         int Cos[SIZE];
         int Sin[SIZE];
         #ifdef USE_LIFT
-        int R[SIZE];
+        int RFactors[SIZE];
         #endif
         for (int j = 1; j <= (n / 4);j++) {
             int angnum = 4 * ( j - 1 ) +1;
             int mult = PI / ( n * 4 );
             int ang = angnum * mult;
+            //Cache/pre-calculate this
             Cos[j] = cos( ang );
             Sin[j] = sin( ang );
             #ifdef USE_LIFT
-            R[j] = ( C[j] - 1 ) / S[j]; //Reciprocal? Only in lifting. Dr. Mugler said it is "that constant"
+            //Reciprocal? Only in lifting. Dr. Mugler said it is "that constant"
+            //I'm calling it the R Factor
+            RFactors[j] = ( C[j] - 1 ) / S[j];
             #endif
             
             int c = Cos[j];
@@ -50,7 +54,8 @@ int main(int argc, char *argv[])
             temp[2] = x[ ( cj + ( n / 2 ) ) ];
             temp[3] = x[ ( m - ( cj + (n / 2) ) ) ];
             #ifdef USE_LIFT
-            lift(temp, S[j], R[j]);
+            double lifted[2];
+            lift(temp, lifted, s, RFactors[j]);
             #else
             
             #endif
@@ -69,40 +74,48 @@ void sumdiff ( double in[], double out[], int size )
     }
 }
 
+//Rotates two points given in (x,y)
 lift ( double x[2], double out[2] double sinValue, double RFactor )
 {
     out[1] = sinValue * (x[0] - RFactor * x[1]) - x[1];
     out[0] = (x[0] - RFactor * x[1]) + RFactor * out[1];
 }
 
-lift90sr ( double pin[size], double Sm[size], double Rm[size], int m )
+lift90sr ( double in[], double sinValues[SIZE], double RFactors[SIZE], int size )
 {
-    int j, mj, i, N;
-    double s[size], kemp[size], r[size], pout1[size], pout2[size], temp[size];
+    int mj;
+    double kemp[2], pout1[size/2], pout2[size/2], temp[2];
     
-    for ( j = 1; j <= m / 4; j++ ) {
-        s[j - 1] = Sm[j - 1];
-        r[j - 1] = Rm[j - 1];
+    for ( int j = 1; j <= size / 4; j++ ) {
         mj = 2 * j - 1;
-        kemp[0] = pin[mj - 1];
-        kemp[1] = pin[mj];
+        //Take every even n of first half of in[] and put it in kemp[0]
+        kemp[0] = in[mj - 1];
+        //Take every odd n of first half of in[] and put it in kemp[1]
+        kemp[1] = in[mj];
         
-        lift ( kemp, s[j - 1], r[j - 1] );
+        lift ( kemp, sinValues[j - 1], RFactors[j - 1] );
+        
+        //Get return values and put it in pout1[]
         pout1[mj - 1] = pout[0];
         pout1[mj] = pout[1];
         
-        temp[0] = pin[ ( m / 2 ) + mj - 1];
-        temp[1] = pin[ ( m / 2 ) + mj];
+        //Take every even n of second half of in[] and put it in temp[0]
+        temp[0] = in[ ( size / 2 ) + mj - 1];
+        //Take every odd n of second half of in[] and put it in temp[0]
+        temp[1] = in[ ( size / 2 ) + mj];
         
         lift ( temp, s[j - 1], r[j - 1] );
+        //Get return values and put them in pout[2]
         pout2[mj - 1] = ( -1 ) * pout[1];
         pout2[mj] = pout[0];
     }
-    for ( i = 0; i < m / 2; i++ )
-        poutb[i] = pout1[i];
     
-    for ( i = m / 2, j = 0; i < m; i++, j++ )
-        poutb[i] = pout2[j];
+    for (int i = 0;i < size / 2;i++ ) {
+        //Copy first half of pout1 into first half of poutb
+        poutb[i] = pout1[i];
+        //Copy first half of pout2 into second half of poutb
+        poutb[i*2] = pout2[i];
+    }
 }
 
 gg90 ( double g2[size], int m2 )
