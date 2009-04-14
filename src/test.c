@@ -31,11 +31,13 @@ int main(int argc, char *argv[])
         #ifdef USE_LIFT
         int RFactors[SIZE];
         #endif
-        for (int j = 1; j <= (n / 4);j++) {
+        //1 2 3 4 5 6 7 8
+        for (int j = 1; j <= (SIZE / 4);j++) {
+            //1 5 9 13 17 21 25 29
+            //This same angle generation was in original gg90()
             int angnum = 4 * ( j - 1 ) +1;
-            int mult = PI / ( n * 4 );
-            int ang = angnum * mult;
-            //Cache/pre-calculate this
+            int ang = angnum * PI / SIZE;
+            //TODO: Cache/pre-calculate this
             Cos[j] = cos( ang );
             Sin[j] = sin( ang );
             #ifdef USE_LIFT
@@ -46,6 +48,7 @@ int main(int argc, char *argv[])
             
             int c = Cos[j];
             int s = Sin[j];
+            //
             int cj = 2 * ( j - 1 ); //Shows up in second loop in lifting
             int m = n - 1; //This too
 
