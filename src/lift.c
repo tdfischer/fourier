@@ -88,15 +88,18 @@ main ( int argc, char *argv[] )
             S4[i] = 2 * S2[i] * temp2rs[i];
             R4[i] = ( -1 * S2[i] ) / temp2rs[i];
         }
+        //This only executes twice
         pcounter = 1;
         while ( pcounter <= 2 ) {
             if ( pcounter == 1 ) {
+                //Copy in 
                 for ( i = 0; i < n / 2; i++ ) {
                     p[i] = p1[i];
                 }
             } else {
                 m = size / 2;
                 lift90sr ( p2, S4, R4, m );
+                //Copy return values into first half of p[]
                 for ( i = 0; i < n / 2; i++ ) {
                     p[i] = poutb[i];
                 }
