@@ -75,29 +75,31 @@ main ( int argc, char *argv[] )
             p2[ ( 2 * j ) - 2] = temp1[2];
             p2[ ( 2 * j ) - 1] = temp1[3];
         }
+        //p1 and p2 are now two sets of points
 
         m = size / 2;
         J1 = 3;
         mrs = 4;
 
         for ( i = 0; i < mrs; i++ ) {
-            temprs[i] = 1 + ( R[i + 1] * S[i + 1] );
-            S2[i] = 2 * S[i + 1] * temprs[i];
-            R2[i] = ( -1 * S[i + 1] ) / temprs[i];
-            temp2rs[i] = 1 + ( R2[i] * S2[i] );
-            S4[i] = 2 * S2[i] * temp2rs[i];
-            R4[i] = ( -1 * S2[i] ) / temp2rs[i];
+            double tempR = 1 + ( R[i + 1] * S[i + 1] );
+            S2[i] = 2 * S[i + 1] * tempR;
+            R2[i] = ( -1 * S[i + 1] ) / tempR;
+            tempR = 1 + ( R2[i] * S2[i] );
+            S4[i] = 2 * S2[i] * tempR;
+            R4[i] = ( -1 * S2[i] ) / tempR;
         }
         //This only executes twice
         pcounter = 1;
         while ( pcounter <= 2 ) {
             if ( pcounter == 1 ) {
-                //Copy in 
+                //Copy in first set of points
                 for ( i = 0; i < n / 2; i++ ) {
                     p[i] = p1[i];
                 }
             } else {
                 m = size / 2;
+                //do magic on second set of points
                 lift90sr ( p2, S4, R4, m );
                 //Copy return values into first half of p[]
                 for ( i = 0; i < n / 2; i++ ) {
