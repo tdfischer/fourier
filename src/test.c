@@ -48,14 +48,25 @@ int main(int argc, char *argv[])
             
             int c = Cos[j];
             int s = Sin[j];
-            //
-            int cj = 2 * ( j - 1 ); //Shows up in second loop in lifting
-            int m = n - 1; //This too
+            //0 2 4 6 8 10 12 14
+            int cj = 2 * ( j - 1 );
+            //31
+            int m = SIZE - 1;
 
-            temp[0] = x[cj]; //And all this, but called "pair1/pair2" instead
+            
+            //The tournament shuffle.
+            //Takes first unused x[]
+            //0 2 4 6 8 10 12 14
+            temp[0] = x[cj];
+            //Takes last unused x[]
+            //31 29 27 25 23 21 19 17
             temp[1] = x[ ( m - cj ) ];
-            temp[2] = x[ ( cj + ( n / 2 ) ) ];
-            temp[3] = x[ ( m - ( cj + (n / 2) ) ) ];
+            //Takes first middle unused x[]
+            //16 18 20 22 24 26 28 30
+            temp[2] = x[ ( cj + ( SIZE / 2 ) ) ];
+            //Second middle unused x[]
+            //15 13 11 9 7 5 3 1
+            temp[3] = x[ ( m - ( cj + (SIZE / 2) ) ) ];
             
             double v[4];
             #ifdef USE_LIFT
