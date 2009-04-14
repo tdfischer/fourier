@@ -95,27 +95,26 @@ lift90sr ( double in[], double out[], double sinValues[SIZE], double RFactors[SI
     }
 }
 
-gg90 ( double g2[size], int m2 )
+gg90 ( double in[size], int size )
 {
-    int j2 = 1, mj2, i, p; //m2 conatins teh length of array and g2 has the array elements of p2
-    double Cm2[size], Sm2[size], c, s, angles2;
+    int mj2, p; //m2 conatins teh length of array and g2 has the array elements of p2
+    double angles2;
     
     
-    for ( j2 = 1; j2 <= ( m2 / 4 ); j2++ ) {
+    for ( int i = 1; i <= ( size / 4 ); j2++ ) {
         mj2 = 4 * ( j2 - 1 ) + 1;
-        angles2 = ( PI * mj2 ) / ( 2 * m2 );
-        Cm2[j2] = cos ( angles2 );
-        Sm2[j2] = sin ( angles2 );
+        angles2 = ( PI * mj2 ) / ( 2 * size );
         
-        c = Cm2[j2];
-        s = Sm2[j2];
+        //Why aren't we caching this from our init loop?
+        double c = cos ( angles2 );
+        double s = sin ( angles2 );
         
-        p = 4 * ( j2 - 1 ) + 1;
+        p = 4 * ( i - 1 ) + 1;
         
-        pout[mj2 - 1] = ( ( c * g2[p - 1] ) + ( s * g2[p] ) ); //overwriting the values check that
-        pout[mj2] = ( s * g2[p - 1] ) - ( c * g2[p] );
-        pout[mj2 + 1] = ( -s * g2[p + 1] ) + ( c * g2[p + 2] );
-        pout[mj2 + 2] = ( c * g2[p + 1] ) + ( s * g2[p + 2] );
+        pout[mj2 - 1] = ( ( c * in[p - 1] ) + ( s * in[p] ) ); //overwriting the values check that
+        pout[mj2] = ( s * in[p - 1] ) - ( c * in[p] );
+        pout[mj2 + 1] = ( -s * in[p + 1] ) + ( c * in[p + 2] );
+        pout[mj2 + 2] = ( c * in[p + 1] ) + ( s * in[p + 2] );
         
     }
 }
