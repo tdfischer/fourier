@@ -56,7 +56,6 @@ int main(int argc, char *argv[])
             
             double v[4];
             #ifdef USE_LIFT
-            double lifted[2];
             lift(x[cj], x[ ( m - cj ) ], v[0], v[1], s, RFactors[j]);
             #else
             
@@ -95,31 +94,20 @@ lift90sr ( double in[], double out[], double sinValues[SIZE], double RFactors[SI
     }
 }
 
-gg90 ( double in[size], int size )
+//Applies trig magic to every group of 4 in in[]
+gg90 ( double in[], double out[] int size )
 {
-    int mj2, p; //m2 conatins teh length of array and g2 has the array elements of p2
-    double angle;
-    
-    //for size=32
-    //1 2 3 4 5 6 7 8
-    for ( int i = 1; i <= ( size / 4 ); i++ ) {
-        //1 5 9 13 17 21 25 29
-        mj2 = 4 * ( i - 1 ) + 1;
-        //PI/64 5PI/64 9PI/64 13PI/64 17PI/64 21PI/64 25PI/64 29PI/64
-        angle = ( PI * mj2 ) / ( 2 * size );
+    for ( int i = 0; i < size; i+=4 ) {
+        double angle = ( PI * i+1 ) / ( 2 * size );
         
         //Why aren't we caching this?
         double c = cos ( angle );
         double s = sin ( angle );
         
-        //0 4 8 11 16 20 24 28
-        pout[mj2 - 1] = ( ( c * in[mj2 - 1] ) + ( s * in[mj2] ) ); //overwriting the values check that
-        //1 5 9 13 17 21 25 29
-        pout[mj2] = ( s * in[p - 1] ) - ( c * in[mj2] );
-        //2 6 10 14 18 22 26 30
-        pout[mj2 + 1] = ( -s * in[mj2 + 1] ) + ( c * in[mj2 + 2] );
-        //3 7 11 15 19 23 27 31
-        pout[mj2 + 2] = ( c * in[mj2 + 1] ) + ( s * in[mj2 + 2] );
+        out[i] = ( ( c * in[i] ) + ( s * in[i+1] ) );
+        out[i+1] = ( s * in[i] ) - ( c * in[i+1] );
+        out[i+2] = ( -s * in[i+2] ) + ( c * in[i+3] );
+        out[i+3] = ( c * in[i+2] ) + ( s * in[i+3] );
         
     }
 }
