@@ -31,10 +31,12 @@ main ( int argc, char *argv[] )
     MPI_Comm_size ( MPI_COMM_WORLD, &numprocs );
 
     if ( myrank == 0 ) { //procs 0 starts in here
+        //Input values
         do {  //taking 8 values in x array
             x[n] = n + 1;
             n++;
         } while ( n < size );
+        //Build cosine, sine, R table
         for ( j = 1; j <= ( n / 4 ); j++ ) {
             angnum = 4 * ( j - 1 ) + 1;
             mult = PI / ( n * 4 );
@@ -47,6 +49,7 @@ main ( int argc, char *argv[] )
         for ( j = 1; j <= ( n / 4 ); j++ ) {
             cj = 2 * ( j - 1 );
             m = n - 1;
+            //Tournament sort
             //0,7,4,3 in the first iteration and 2 5 6 1 in the second iteration
             pair1[0] = x[cj];
             pair1[1] = x[ ( m - cj ) ];
@@ -75,22 +78,25 @@ main ( int argc, char *argv[] )
             p2[ ( 2 * j ) - 2] = temp1[2];
             p2[ ( 2 * j ) - 1] = temp1[3];
         }
-        //p1 and p2 are now two sets of points
+        //p1 and p2 are now two sets of points, one for each processor
 
         m = size / 2;
         J1 = 3;
         mrs = 4;
 
+        //Computes the next set of angles
+        ///TODO: Move to lookup table
         for ( i = 0; i < mrs; i++ ) {
             double tempR = 1 + ( R[i + 1] * S[i + 1] );
-            S2[i] = 2 * S[i + 1] * tempR;
-            R2[i] = ( -1 * S[i + 1] ) / tempR;
-            tempR = 1 + ( R2[i] * S2[i] );
-            S4[i] = 2 * S2[i] * tempR;
-            R4[i] = ( -1 * S2[i] ) / tempR;
+            double s = 2 * S[i + 1] * tempR;
+            tempR = ( -1 * S[i + 1] ) / tempR;
+            tempR = 1 + ( tempR * s );
+            S[i] = 2 * s * tempR;
+            R[i] = ( -1 * s ) / tempR;
         }
         //This only executes twice
         pcounter = 1;
+        //Loop one is first processor, two is the other
         while ( pcounter <= 2 ) {
             if ( pcounter == 1 ) {
                 //Copy in first set of points
@@ -106,19 +112,24 @@ main ( int argc, char *argv[] )
                     p[i] = poutb[i];
                 }
             }
+            //Each processor rejoins here.
             liftL = 4;
             for ( i = 0; i < liftL; i++ ) {
-                Rold[i] = R4[i];
-                Sold[i] = S4[i];
+                Rold[i] = R[i];
+                Sold[i] = S[i];
             }
+            //Also only executed twice
             for ( j = 1; j <= 2; j++ ) {
+                //1 2 3
+                //4 5 6 on second loop
                 m2 = pow ( 2, ( j - 1 ) );
                 L = 16 / m2;
+                ///TODO: Use lookup table instead
                 for ( i = 0; i < liftL; i++ ) {
-                    temprs[i] = 1 + Rold[i] * Sold[i];
-                    Rnew[i] = -Sold[i] / temprs[i];
-                    Snew[i] = 2 * Sold[i] * temprs[i];
+                    Rold[i] = -1 / (1 + Rold[i]);
+                    Sold[i] = 2 * Sold[i] * (Sold[i] * Rold[i] + 1); //Double angle
                 }
+                //Splittin up the work happens in here
                 for ( k = 1; k <= m2; k++ ) {
                     h1 = L * ( k - 1 );
                     h3 = ( L * k ) - 1;
@@ -138,7 +149,7 @@ main ( int argc, char *argv[] )
                         temp3[i] = temp2[h4]; //8-1a5
                     }
 
-                    lift90sr ( temp3, Snew, Rnew, i + 1 );
+                    lift90sr ( temp3, Sold, Rold, i + 1 );
                     for ( i = 0, h5 = L / 2; h5 < L; i++, h5++ ) {
                         temp2[h5] = poutb[i];
                     }
@@ -151,10 +162,6 @@ main ( int argc, char *argv[] )
                     }
                 }  //kloop ends here
                 liftL = liftL / 2;
-                for ( i = 0; i < 4; i++ ) {
-                    Rold[i] = Rnew[i];
-                    Sold[i] = Snew[i];
-                }
 
             }   //end of for loop....
 //   printf ("\n****************\n");
@@ -203,6 +210,7 @@ main ( int argc, char *argv[] )
 
                 j4r[k-1] = loc1[k];
 
+                //Final result vector
                 fx1[ j4r[k-1] ]         =  temp2[0];
                 fx1[ ( n-1 )-j4r[k-1] ]   =  temp2[1];
                 fx1[ ( n/2 )-1-j4r[k-1] ] =  temp2[2];
@@ -220,6 +228,8 @@ main ( int argc, char *argv[] )
     MPI_Finalize ();
     return 0;
 }
+//Descrambles after the tournament sort and DCT
+//The "unsort"
 locations ( int n1,int pcounter )
 {
     int dc =4;

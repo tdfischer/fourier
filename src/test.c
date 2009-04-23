@@ -31,6 +31,9 @@ int main(int argc, char *argv[])
         #ifdef USE_LIFT
         int RFactors[SIZE];
         #endif
+        
+        double points[SIZE/2];
+        double points2[SIZE/2];
         //1 2 3 4 5 6 7 8
         for (int j = 1; j <= (SIZE / 4);j++) {
             //1 5 9 13 17 21 25 29
@@ -68,14 +71,44 @@ int main(int argc, char *argv[])
             //15 13 11 9 7 5 3 1
             temp[3] = x[ ( m - ( cj + (SIZE / 2) ) ) ];
             
-            double v[4];
-            #ifdef USE_LIFT
-            lift(x[cj], x[ ( m - cj ) ], v[0], v[1], s, RFactors[j]);
-            #else
+            double v[4]; //Holds our temporary points
             
+            #ifdef USE_LIFT
+            //lift first x[] and last x[]
+            lift(x[cj], x[ ( m - cj ) ], &v[0], &v[1], s, RFactors[j]);
+            sumdiff(x[ ( cj + ( SIZE / 2 ) ) ], x[ ( m - ( cj + (SIZE / 2) ) ) ], &v[2], &v[3]);
+            v[2] *= SQRT_2;
+            v[3] *= -SQRT_2;
+            
+            lift(v[2], v[3], &v[2], &v[3], s, RFactors[j]);
+            
+            #else
+
+            gg90(v, &v, 2);
+            //We multiply these two by sqrt(2) as is done in gg90.c.
+            //We're using the communitative property here, so don't be confused.
+            v[2] *= SQRT_2;
+            v[3] *= SQRT_2;
+
             #endif
+            
+            sumdiff(v, 4);
+            //Evens
+            points[ ( 2 * j) - 2] = v[0];
+            //Odds
+            points[ ( 2 * j) - 1] = v[1];
+            points2[ ( 2 * j) - 2] = v[2];
+            points2[ ( 2 * j) - 1] = v[3];
         }
+        
+        sumdiff(points, SIZE/2);
     }
+}
+
+void sumdiff (double x, double y, double xOut, double yOut)
+{
+    xOut = x + y;
+    yOut = x - y;
 }
 
 void sumdiff ( double in[], double out[], int size )

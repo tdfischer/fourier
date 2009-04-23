@@ -55,6 +55,7 @@ main ( int argc, char **argv[] )
             temp[3] = x[ ( m - ( cj + ( n / 2 ) ) ) ];
 
 //        mj = 4 * (j - 1) + 1;
+            //An inline gg90 with a SQH thrown in for some reason
             v[0] = ( ( c * temp[0] ) + ( s * temp[1] ) );
             v[1] = ( ( s * temp[0] ) - ( c * temp[1] ) );
 
@@ -72,6 +73,7 @@ main ( int argc, char **argv[] )
             p2[ ( 2 * j ) - 2] = temp1[2];
             p2[ ( 2 * j ) - 1] = temp1[3];
         }
+        //p1 and p2 are now two sets of points
 
 //printf("pnew1 array is");
 
