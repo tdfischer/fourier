@@ -5,14 +5,25 @@
  */
 #define SIZE 32
 
+#import <math.h>
+#import <mpi.h>
+
 //Uncomment to use lift instead of gg90
 //#define USE_LIFT
 
+void sumdiff ( double[], double[], int );
+void gg90 ( double[], double[], int );
+void lift ( double, double, double*, double*, double, double );
+void lift90sr ( double[], double[], double[], double[], int );
+
 int main(int argc, char *argv[])
 {
+
     MPI_Init(&argc, &argv);
-    int startTime = MPI_Wtime();
-    
+    int startTime = MPI_Wtime();    
+
+    double x[SIZE], temp[4];
+
     int processorID;
     int worldSize;
     MPI_Comm_rank(MPI_COMM_WORLD, &processorID);
@@ -21,7 +32,7 @@ int main(int argc, char *argv[])
     if (processorID == 0) {
         //Changed this from while(n<size) loop for readability
         //Builds an initial list of data points
-        int n;
+      int n, j;
         for(n = 1;n<=SIZE;n++) {
             x[n] = n;
         }
@@ -35,11 +46,11 @@ int main(int argc, char *argv[])
         double points[SIZE/2];
         double points2[SIZE/2];
         //1 2 3 4 5 6 7 8
-        for (int j = 1; j <= (SIZE / 4);j++) {
+        for (j = 1; j <= (SIZE / 4);j++) {
             //1 5 9 13 17 21 25 29
             //This same angle generation was in original gg90()
             int angnum = 4 * ( j - 1 ) +1;
-            int ang = angnum * PI / SIZE;
+            int ang = angnum * M_PI / SIZE;
             //TODO: Cache/pre-calculate this
             Cos[j] = cos( ang );
             Sin[j] = sin( ang );
@@ -84,15 +95,17 @@ int main(int argc, char *argv[])
             
             #else
 
-            gg90(v, &v, 2);
+	    //CHECK: Are these the right arguments to be passed to sumdiff? (bmm)
+            gg90(v, v, 2);
             //We multiply these two by sqrt(2) as is done in gg90.c.
             //We're using the communitative property here, so don't be confused.
-            v[2] *= SQRT_2;
-            v[3] *= SQRT_2;
+            v[2] *= M_SQRT2;
+            v[3] *= M_SQRT2;
 
             #endif
             
-            sumdiff(v, 4);
+	    //CHECK: Are these the right arguments to be passed to sumdiff? (bmm)
+            sumdiff(v, v, 4); 
             //Evens
             points[ ( 2 * j) - 2] = v[0];
             //Odds
@@ -101,19 +114,23 @@ int main(int argc, char *argv[])
             points2[ ( 2 * j) - 1] = v[3];
         }
         
-        sumdiff(points, SIZE/2);
+	//CHECK: Are these the right arguments to be passed to sumdiff? (bmm)
+        sumdiff(points, points, SIZE/2); 
     }
 }
 
+/*
 void sumdiff (double x, double y, double xOut, double yOut)
 {
     xOut = x + y;
     yOut = x - y;
 }
+*/
 
 void sumdiff ( double in[], double out[], int size )
 {
-    for (int i = 0; i < size / 2; i++ ) {
+    int i;
+    for (i = 0; i < size / 2; i++ ) {
         //Split in[] into halves
         //Put first half plus second half into first half of return
         //And then the second half
@@ -122,30 +139,37 @@ void sumdiff ( double in[], double out[], int size )
     }
 }
 
+#ifdef USE_LIFT
 //Rotates two points given in (x,y)
-lift ( double x, double y, double xOut, double yOut, double sinValue, double RFactor ) {
-    yOut = sinValue * (x - RFactor * y) - y;
-    xOut = (x - RFactor * y) + RFactor * yOut;
+void lift ( double x, double y, double *xOut, double *yOut, double sinValue, double RFactor ) {
+    *yOut = sinValue * (x - RFactor * y) - y;
+    *xOut = (x - RFactor * y) + RFactor * (*yOut);
 }
 
-lift ( double x[2], double out[2] double sinValue, double RFactor )
+/* Removed to allow the code to compile. As it's not used (yet?), this isn't a problem
+void lift ( double x[2], double out[2], double sinValue, double RFactor )
 {
     out[1] = sinValue * (x[0] - RFactor * x[1]) - x[1];
     out[0] = (x[0] - RFactor * x[1]) + RFactor * out[1];
 }
+*/
 
-lift90sr ( double in[], double out[], double sinValues[SIZE], double RFactors[SIZE], int size )
+void lift90sr ( double in[], double out[], double sinValues[SIZE], double RFactors[SIZE], int size )
 {
-    for (int i = 0; i < size; i+=2) {
+    int i;
+    for (i = 0; i < size; i+=2) {
         lift(in[i], in[i+1], &out[i], &out[i+1], sinValues[i], RFactors[i]);
     }
 }
 
+#else
+
 //Applies trig magic to every group of 4 in in[]
-gg90 ( double in[], double out[] int size )
+void gg90 ( double in[], double out[], int size )
 {
-    for ( int i = 0; i < size; i+=4 ) {
-        double angle = ( PI * i+1 ) / ( 2 * size );
+    int i;
+    for ( i = 0; i < size; i+=4 ) {
+        double angle = ( M_PI * i+1 ) / ( 2 * size );
         
         //Why aren't we caching this?
         double c = cos ( angle );
@@ -158,3 +182,5 @@ gg90 ( double in[], double out[] int size )
         
     }
 }
+
+#endif
