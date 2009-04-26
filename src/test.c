@@ -5,8 +5,8 @@
  */
 #define SIZE 32
 
-#import <math.h>
-#import <mpi.h>
+#include <math.h>
+#include <mpi.h>
 
 //Uncomment to use lift instead of gg90
 //#define USE_LIFT
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
             
             #else
 
-	    //CHECK: Are these the right arguments to be passed to sumdiff? (bmm)
+            //CHECK: Are these the right arguments to be passed to sumdiff? (bmm)
             gg90(v, v, 2);
             //We multiply these two by sqrt(2) as is done in gg90.c.
             //We're using the communitative property here, so don't be confused.
@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
 
             #endif
             
-	    //CHECK: Are these the right arguments to be passed to sumdiff? (bmm)
+            //CHECK: Are these the right arguments to be passed to sumdiff? (bmm)
             sumdiff(v, v, 4); 
             //Evens
             points[ ( 2 * j) - 2] = v[0];
@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
             points2[ ( 2 * j) - 1] = v[3];
         }
         
-	//CHECK: Are these the right arguments to be passed to sumdiff? (bmm)
+        //CHECK: Are these the right arguments to be passed to sumdiff? (bmm)
         sumdiff(points, points, SIZE/2); 
     }
 }
