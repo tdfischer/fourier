@@ -9,7 +9,7 @@ to the list of contributors and you can start pushing commits.
 
 To start with git, run:
 
-    git clone <username>@github.com:workman161/fourier.git
+    git clone git@github.com:workman161/fourier.git
 
 This'll make a clone of the git repository. At this point, your repository is
 totally independent of the github one. Any changes you make must later be
