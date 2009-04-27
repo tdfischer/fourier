@@ -11,6 +11,75 @@ double sum2[size];
 double pout[size];
 double poutb[size];
 double loc1[size];
+
+double sinTable[size/8+size/4];
+double cosTable[size/8+size/4];
+double rTable[size/8+size/4];
+
+void buildTables() {
+    double angle;
+    //Generate x/(size*2) angles
+    for(int i = 0;i < size/8;i++) {
+        angle = (PI*(i*4+1))/(size*2);
+        sinTable[i] = sin(angle);
+        cosTable[i] = cos(angle);
+        rTable[i] = (cosTable[i] - 1) / sinTable[i];
+    }
+    
+    //Generate x/size angles
+    for (int i = 0;i<size/4;i++) {
+        angle = (PI*(i*4+1)) / size;
+        sinTable[i + size/8] = sin(angle);
+        cosTable[i + size/8] = cos(angle);
+        rTable[i8] = (cosTable[i] - 1) / sinTable[i];
+    }
+}
+
+double getSin(int numerator, int denominator) {
+    //For x/8 and x/16, the only values ever passed in are
+    //1/8, 1/16, and 5/16.
+    switch(denominator) {
+        case 8:
+            return 0.382683424; //sin(pi/8)
+        case 16:
+            return (numerator == 1) ? 0.195090322 : 0.8314696123; //sin(pi/16), sin(5pi/16)
+        case size:
+            return sinTable[(numerator - 1)/4];
+        case size*2:
+            return sinTable[(numerator -1)/4 + size/8];
+    }
+}
+
+double getCos(int numerator, int denominator) {
+    //For x/8 and x/16, the only values ever passed in are
+    //1/8, 1/16, and 5/16.
+    switch(denominator) {
+        case 8:
+            return 0.9238795325; //cos(pi/8)
+        case 16:
+            return (numerator == 1) ? 0.9807852804 : 0.555570233; //cos(pi/16), cos(5pi/16)
+        case size:
+            return cosTable[(numerator - 1)/4];
+        case size*2:
+            return cosTable[(numerator -1)/4 + size/8];
+    }
+}
+
+double getR(int numerator, int denominator) {
+    //For x/8 and x/16, the only values ever passed in are
+    //1/8, 1/16, and 5/16.
+    switch(denominator) {
+        case 8:
+            return -0.1989123674; //angle == pi/8
+        case 16:
+            return (numerator == 1) ? -0.0984914034 : -0.534511136; //angle == pi/16, angle == 5pi/16)
+        case size:
+            return rTable[(numerator - 1)/4];
+        case size*2:
+            return rTable[(numerator -1)/4 + size/8];
+    }
+}
+
 main ( int argc, char *argv[] )
 {
     int L, m2, myrank, pcounter,hin, h5, h6, h7, h16, h8, J1, liftL, mrs, tag =
