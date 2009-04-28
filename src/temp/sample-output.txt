@@ -1,0 +1,11 @@
+Tue Apr 14 08:59:05 EDT 2009
+
+Case 32 for 1 processor
+Timing from rank 0 is 10.946533us.
+Timing from rank 0 is 9.029871us.
+Timing from rank 0 is 9.045238us.
+Timing from rank 0 is 11.044554us.
+Timing from rank 0 is 8.096453us.
+Timing from rank 0 is 7.086550us.
+Timing from rank 0 is 9.993906us.
+Timing from rank 0 is 8.905539us.
