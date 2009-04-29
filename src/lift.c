@@ -17,9 +17,10 @@ double cosTable[size/8+size/4];
 double rTable[size/8+size/4];
 
 void buildTables() {
+    int i;  
     double angle;
     //Generate x/(size*2) angles
-    for(int i = 0;i < size/8;i++) {
+    for(i = 0;i < size/8;i++) {
         angle = (PI*(i*4+1))/(size*2);
         sinTable[i] = sin(angle);
         cosTable[i] = cos(angle);
@@ -27,11 +28,11 @@ void buildTables() {
     }
     
     //Generate x/size angles
-    for (int i = 0;i<size/4;i++) {
+    for (i = 0;i<size/4;i++) {
         angle = (PI*(i*4+1)) / size;
         sinTable[i + size/8] = sin(angle);
         cosTable[i + size/8] = cos(angle);
-        rTable[i8] = (cosTable[i] - 1) / sinTable[i];
+        rTable[i] = (cosTable[i] - 1) / sinTable[i];
     }
 }
 
@@ -287,10 +288,12 @@ main ( int argc, char *argv[] )
             }//k ends here
             pcounter++;  //have to end after the program
         }
+
+        mytime = MPI_Wtime () - mytime;
+
         for ( i=0;i<32;i++ )
             printf ( "fx is %lf\n",fx1[i] );
 
-        mytime = MPI_Wtime () - mytime;
         mytime = mytime * 1000000;
         printf ( "Timing from rank %d is %lfus.\n", myrank, mytime );
     } //end of rank 0
